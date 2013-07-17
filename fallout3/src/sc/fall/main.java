@@ -52,10 +52,8 @@ public void start(){
 private void ReadConfig(){
 	try {
 		String url_part = getDocumentBase().toString();
-//		url_part=url_part.substring(0,url_part.indexOf("sc."));
-//		URL urla = new URL("http://samlis.lunarii.org/f3s/config.f3s");
-		URL urla = new URL("http://zakon-fallout.pl/terminal/config.f3s");
-//		URL urla = new URL(url_part+"config.f3s"); // pamietac usunac po testach
+
+		URL urla = new URL(url_part+"config.f3s"); // pamietac usunac po testach
 		InputStream infile = urla.openStream();
 		BufferedReader in = new BufferedReader(new InputStreamReader(infile));
 		String txta=in.readLine();
