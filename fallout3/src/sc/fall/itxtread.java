@@ -337,6 +337,7 @@ private void WriteToScreen(String filename){
 					asdf.setForeground(new Color(0,240,0));
 					asdf.setWrapStyleWord(true);
 					asdf.setLineWrap(true);
+					asdf.setEditable(false);
 					asdf.setBackground(Color.black);
 					asdf.setBounds(0,last_y,770,((line_length+1)*20));
 					last_y+=5+line_length*20;
@@ -344,6 +345,7 @@ private void WriteToScreen(String filename){
 					System.out.println("poszlo");
 					JLabel label =	new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")))));
 					label.setBackground(Color.black);
+
 					label.setBounds(0,last_y,img_w,img_h);
 					last_y+=5+img_h;
 					panel_txt.add(label);
@@ -360,6 +362,7 @@ private void WriteToScreen(String filename){
 				asdf.setFont(font);
 				asdf.setForeground(new Color(0,240,0));
 				asdf.setLineWrap(true);
+				asdf.setEditable(false);
 				asdf.setWrapStyleWord(true);
 				asdf.setBackground(Color.black);
 				asdf.setBounds(0,last_y,770,((line_length+1)*20));
