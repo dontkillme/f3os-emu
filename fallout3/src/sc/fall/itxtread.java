@@ -328,9 +328,8 @@ private void WriteToScreen(String filename){
 //			if(text.equals("<text>")){
 
 			while( (text = in.readLine() ) !=null){
-	
+
 				if(text.contains("<img>")){
-				
 					alfa +="\n"+ text.substring(0,text.indexOf("<img>"));
 					line_length++;
 					JTextArea asdf = new JTextArea(alfa);
@@ -342,7 +341,7 @@ private void WriteToScreen(String filename){
 					asdf.setBounds(0,last_y,770,((line_length+1)*20));
 					last_y+=5+line_length*20;
 					panel_txt.add(asdf);
-//					System.out.println("e:\\samlis\\"+text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")));
+					System.out.println("poszlo");
 					JLabel label =	new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")))));
 					label.setBackground(Color.black);
 					label.setBounds(0,last_y,img_w,img_h);
@@ -378,7 +377,7 @@ private void WriteToScreen(String filename){
 				
 				
 				repaint();
-				
+				validate();
 				
 
 				
@@ -393,7 +392,7 @@ private void WriteToScreen(String filename){
 		}
 		
 	}
-	
+
 	/**
 	 * zmiana wielkosci obrazku; (image resize)
 	 * resize and recolor image
@@ -536,12 +535,12 @@ private BufferedImage resizeImage(String text){
 	private void OpenFile(String filename){
 		try {
 			if(parent.equalsIgnoreCase("pc")){
-				FileInputStream infile = new FileInputStream(new File(file_url+filename+".f3s"));
+				FileInputStream infile = new FileInputStream(new File(file_url+filename+".f3s", "UTF-8"));
 				in = new BufferedReader(new InputStreamReader(infile));
 			}else{
 				url = new URL(url_txt+filename+".f3s");
 				InputStream infile = url.openStream();	
-				in = new BufferedReader(new InputStreamReader(infile));
+				in = new BufferedReader(new InputStreamReader(infile, "UTF-8"));
 			}
 //			new FileInputStream(filename+".f3s"))
 		
@@ -564,7 +563,13 @@ private BufferedImage resizeImage(String text){
 				}else{
 				plik=filename;	
 			OpenFile(filename);
-			String text = in.readLine();
+			String text = "";
+			text = in.readLine();
+			System.out.println(text);
+			if(text.contains("<")){
+				text = text.substring(text.indexOf("<"));
+			}
+			System.out.println(text);
 			switch(text.substring(0,6).toLowerCase()){
 				case "<text>": {
 //					in.close();
