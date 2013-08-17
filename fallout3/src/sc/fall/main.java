@@ -26,8 +26,9 @@ private String info_term = "", url="", txt="";
 
 public void init(){
 	setLayout(null);
-	setSize(800,600);
 	setBackground(Color.BLACK);
+	setSize(800,600);
+	
 	ReadConfig();
 }
 public void start(){
@@ -53,7 +54,7 @@ private void ReadConfig(){
 	try {
 		String url_part = getDocumentBase().toString();
 
-		URL urla = new URL(url_part+"config.f3s"); // pamietac usunac po testach
+		URL urla = new URL(url_part+"config.f3s"); 
 		InputStream infile = urla.openStream();
 		BufferedReader in = new BufferedReader(new InputStreamReader(infile));
 		String txta=in.readLine();
