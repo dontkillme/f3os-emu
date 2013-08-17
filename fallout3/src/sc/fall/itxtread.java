@@ -3,6 +3,7 @@ package sc.fall;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
@@ -22,21 +23,31 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.Caret;
 /**
  * 
  * Bottom side of the console, where the action goes on...
- *
+ * Error info list
+ * 0 - passwords couldnt load
+1 - file coundnt load
+2 - error with loading image
+3 - error on loading map
+4 - error on loading file
+5 - error on loading passwords file
+6 - error on reading file
  */
 public class itxtread extends JPanel implements KeyListener {
 
 	private JTextArea txt = new JTextArea();
-
+	private FileSystemView partitions = FileSystemView.getFileSystemView();
+	private File[] f = File.listRoots();
 	protected JTextField cmd = new JTextField("");
 	private JTextField cmd_char = new JTextField("> ");
 	private JPanel panel_txt = new JPanel(null);
@@ -45,17 +56,19 @@ public class itxtread extends JPanel implements KeyListener {
 	//
 	private Font font = new Font("Monospaced", Font.BOLD, 14);
 	private JScrollBar scrollbar;
-
+	static private JLayeredPane mappoint = new JLayeredPane();
+	private JLabel point;
 	private Random rand = new Random();
 	private BufferedReader in;
 //	protected static URL url = null;
 	protected static URL url = null;
 	protected static URL url_czysty = null;
 	private static String file_url = null;
+
 	private String plik ="", nullcmd = "", url_txt="", parent ="";
 	private int wys_txt=0, wys_txta=0, width=770;
 	private int mode = 0, right, chance = 3, pass_lgh = 0 , lstr=0, img_h=0, img_w=0;
-	private boolean password_used = false, debug_mode=false, panel_focus=false, wts_on=false;
+	private boolean password_used = false, debug_mode=false, panel_focus=false, wts_on=false, fddread = false;
 	private ArrayList<String> site_list  = new ArrayList<String>();
 	private String[] passwords = new String[20];
 	private JLabel label;
@@ -67,6 +80,12 @@ public class itxtread extends JPanel implements KeyListener {
 	 * @param null_cmd - what text is used if there is no such command
 	 * @param parent - how did it started (applet or normal application), use "pc" for normal application if not using PCFrame.java as starter
 	 */
+	
+	private void fddreboot(){
+		partitions = FileSystemView.getFileSystemView();
+		f = File.listRoots();
+	}
+	
 	public itxtread(String url, String null_cmd, String parent){
 		setLayout(null);
 		try {
@@ -139,8 +158,10 @@ public class itxtread extends JPanel implements KeyListener {
 		scroll.setVerticalScrollBar(scrollbar);
 		
 		panel_txt.add(txt);
+		point = new JLabel(new ImageIcon(paintPoint()));
 		passwordLoad();
 		ReadFile("wlc",0);
+		
 	}
 	
 
@@ -244,6 +265,7 @@ public class itxtread extends JPanel implements KeyListener {
 		}else if(a>20 && a<25 && password_used==false){
 		zwrot = passwords[right];
 		password_used=true;
+		System.out.println(zwrot);
 		}else{
 		for(int b=0; b<pass_lgh; b++){
 			znak = randomChar(rand.nextInt(9));
@@ -284,7 +306,7 @@ public class itxtread extends JPanel implements KeyListener {
 	private void passwordLoad(){
 		try {
 			
-		OpenFile("passwords");
+		OpenLocalFiles("passwords");
 		String linia;
 		
 			while( (linia = in.readLine()) !=null ){
@@ -304,6 +326,7 @@ public class itxtread extends JPanel implements KeyListener {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			ErrorShow("0");
 		}
 	}
 	
@@ -321,6 +344,8 @@ private void WriteToScreen(String filename){
 
 		int line_length=0;
 		int last_y=0;
+
+		last_y=+5;
 		try {
 			String alfa = "";
 //			String text = in.readLine();
@@ -332,8 +357,10 @@ private void WriteToScreen(String filename){
 				if(text.contains("<img>")){
 					alfa +="\n"+ text.substring(0,text.indexOf("<img>"));
 					line_length++;
+					alfa.toUpperCase();
 					JTextArea asdf = new JTextArea(alfa);
 					asdf.setFont(font);
+					
 					asdf.setForeground(new Color(0,240,0));
 					asdf.setWrapStyleWord(true);
 					asdf.setLineWrap(true);
@@ -342,8 +369,8 @@ private void WriteToScreen(String filename){
 					asdf.setBounds(0,last_y,770,((line_length+1)*20));
 					last_y+=5+line_length*20;
 					panel_txt.add(asdf);
-					System.out.println("poszlo");
-					JLabel label =	new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")))));
+//					System.out.println("poszlo");
+					JLabel label =	new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")),0 )));
 					label.setBackground(Color.black);
 
 					label.setBounds(0,last_y,img_w,img_h);
@@ -357,6 +384,7 @@ private void WriteToScreen(String filename){
 				}
 			}
 			if(alfa != null){
+				alfa.toUpperCase();
 				JTextArea asdf = new JTextArea(alfa);
 //				alfa+="\n"+in.readLine();
 				asdf.setFont(font);
@@ -392,23 +420,57 @@ private void WriteToScreen(String filename){
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			ErrorShow("1");
 		}
 		
 	}
 
+
+private void ErrorShow(String text){
+	try {
+		in.close();
+	} catch (IOException e) {
+		
+	}
+	JTextArea asdf;
+	if(text.equals("6")){
+		asdf = new JTextArea("NIE MA TAKIEGO PLIKU");
+	}else {
+		asdf = new JTextArea("B£¥D NR "+text+"\nZG£OŒ ADMINISTRATOROWI WYPE£NIAJ¥C FORMULARZ 432\nZNAJDUJ¥CY SIE W DZIALE REKLAMACJI WEWNÊTRZNYCH.");
+	}
+	panel_txt.removeAll();
+	
+	asdf.setFont(font);
+	asdf.setForeground(new Color(0,240,0));
+	asdf.setLineWrap(true);
+	asdf.setEditable(false);
+	asdf.setWrapStyleWord(true);
+	asdf.setBackground(Color.black);
+	asdf.setBounds(0,0,770,70);
+	panel_txt.add(asdf);
+	wys_txta=80;
+	wys_txt=wys_txta;
+	setWys();
+	repaint();
+}
 	/**
 	 * zmiana wielkosci obrazku; (image resize)
 	 * resize and recolor image
 	 * @param text - filename
 	 */
-private BufferedImage resizeImage(String text){
+private BufferedImage resizeImage(String text, int par){
 	try {
 		BufferedImage img;
-		if(parent.equalsIgnoreCase("pc")){
+		if(parent.equalsIgnoreCase("pc") && fddread!=true){
 			File url = new File(file_url+text);
-			System.out.println(url);
+//			System.out.println(url);
 			img = ImageIO.read(url);
-		}else{
+		}else if(parent.equalsIgnoreCase("pc") && fddread==true)
+		{
+			File url = new File(f[0]+text);
+			img = ImageIO.read(url);
+		}
+		else{
 			URL url = new URL(itxtread.url_czysty+text);
 			img = ImageIO.read(url);
 		}
@@ -417,13 +479,26 @@ private BufferedImage resizeImage(String text){
 	int w, h;
 	w=img.getWidth();
 	h=img.getHeight();
-	if(w>700){
-		w=700;
-		
-		}
-		if(h>400){
-		h=400;
-		}
+	switch(par){
+	case 0:{
+		if(w>700){
+			w=700;
+			
+			}
+			if(h>400){
+			h=400;
+			}
+		break;
+	}
+	case 1:{
+		if(w>750){
+			w=750;
+			
+			}
+		break;
+	}
+	}// end switch
+	
 		img_h=h;
 		img_w=w;
 	BufferedImage resize = new BufferedImage(w, h, img.getType());
@@ -443,7 +518,7 @@ private BufferedImage resizeImage(String text){
 	 green = (kolor & 0x0000ff00) >> 8;
 	 blue  =  kolor & 0x000000ff;
 	 green = Math.max(red, Math.max(green, blue));
-    g.setColor(new Color(0,green,0));
+		 g.setColor(new Color(0,green,0));
     g.drawRect(x, y, 1, 1);
     	}
     }
@@ -451,7 +526,7 @@ private BufferedImage resizeImage(String text){
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	
+		ErrorShow("2");
 	} 
     return null;
 }
@@ -476,7 +551,7 @@ private BufferedImage resizeImage(String text){
 					while(!(text = in.readLine()).equalsIgnoreCase("<koniec>") )
 					{
 						if(text.contains("<img>")){
-							label = new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")))));
+							label = new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")),0 )));
 						} else if(text.substring(0, 2).equalsIgnoreCase("<=")){
 							WtsPara(Integer.parseInt(text.substring(2,3)));
 						}else if(text.substring(0,2).equalsIgnoreCase("<-")){
@@ -532,14 +607,100 @@ private BufferedImage resizeImage(String text){
 //		System.out.println("done");
 	}
 	/**
+	 * Method creates point for map
+	 * @return
+	 */
+	private BufferedImage paintPoint(){
+		BufferedImage pointa = new BufferedImage(15, 15, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = pointa.createGraphics();
+		g.setColor(Color.green);
+		g.drawRect(0, 0, 14, 14);
+		g.drawRect(1, 1, 12, 12);
+		return pointa;
+	}
+	
+	private void paintMap(){
+		panel_txt.removeAll();
+		wys_txt=400;
+		String text;
+		try {
+			while( (text = in.readLine() ) !=null){
+				if(text.contains("<img>")){
+					
+					JLabel labela =	new JLabel(new ImageIcon(resizeImage(text.substring( text.indexOf("<img>")+5, text.indexOf("</img>")),1 )));
+					wys_txta=img_h;
+					mappoint.setPreferredSize(new Dimension(img_w,img_h));
+					mappoint.setBounds(0,0,img_w,img_h);
+					labela.setBounds(0,0,img_w,img_h);
+
+					panel_txt.add(mappoint);
+					
+					mappoint.add(labela, new Integer(0));
+					mappoint.add(point, new Integer(1));
+					setWys();
+					scrollbar = scroll.getVerticalScrollBar();
+					scrollbar.setValue(scrollbar.getMinimum());
+					repaint();
+					validate();
+					in.close();
+					break;
+				}
+			}// end while
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ErrorShow("3");
+		}
+	}
+	private void setPointOnMap(String cord_code){
+		String[] code = cord_code.split(",");
+		point.setBounds(Integer.parseInt(code[0]),Integer.parseInt(code[1]),15,15);
+		
+		mappoint.moveToFront(point);
+		repaint();
+		validate();
+	}
+	
+	private void OpenLocalFiles(String filename){
+		try {
+			
+			if(parent.equalsIgnoreCase("pc")){
+				FileInputStream infile;
+				
+				infile = new FileInputStream(new File(file_url+filename+".f3s"));
+				in = new BufferedReader(new InputStreamReader(infile, "UTF-8"));
+				
+			}else{
+				url = new URL(url_txt+"passwords.f3s");
+				InputStream infile = url.openStream();	
+				in = new BufferedReader(new InputStreamReader(infile, "UTF-8"));
+			}
+//			new FileInputStream(filename+".f3s"))
+		
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			e.printStackTrace();
+			ErrorShow("5");
+		}
+	}
+	/**
 	 * metoda odpowiedzialna za otwieranie pliku
 	 * Opens file
 	 */
 	private void OpenFile(String filename){
 		try {
+			
 			if(parent.equalsIgnoreCase("pc")){
-				FileInputStream infile = new FileInputStream(new File(file_url+filename+".f3s", "UTF-8"));
-				in = new BufferedReader(new InputStreamReader(infile));
+				FileInputStream infile;
+				if(fddread==true){
+					infile = new FileInputStream(new File(f[0]+filename+".f3s"));
+					in = new BufferedReader(new InputStreamReader(infile, "UTF-8"));
+				}else{
+				infile = new FileInputStream(new File(file_url+filename+".f3s"));
+				in = new BufferedReader(new InputStreamReader(infile, "UTF-8"));
+				}
 			}else{
 				url = new URL(url_txt+filename+".f3s");
 				InputStream infile = url.openStream();	
@@ -551,6 +712,7 @@ private BufferedImage resizeImage(String text){
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
+			ErrorShow("4");
 		}
 	}
 	/**
@@ -559,6 +721,21 @@ private BufferedImage resizeImage(String text){
 	 * @param filename, str - str stands for page
 	 */
 	
+	protected void fddstart(){
+		fddread=true;
+		ReadFile("autorun",0);
+	}
+	protected void fddstop(){
+		fddread=false;
+		ReadFile("wlc",0);
+		if(debug_mode==true){
+		txt.setLineWrap(true);
+		txt.setWrapStyleWord(true);
+		qitMeth();
+		debug_mode=false;
+		}
+	}
+	
 	private void ReadFile(String filename, int str){
 			try {
 				if(filename.contains("#") || filename.contains("?") || filename.contains("$")){
@@ -566,13 +743,14 @@ private BufferedImage resizeImage(String text){
 				}else{
 				plik=filename;	
 			OpenFile(filename);
+		
 			String text = "";
 			text = in.readLine();
-			System.out.println(text);
+
 			if(text.contains("<")){
 				text = text.substring(text.indexOf("<"));
 			}
-			System.out.println(text);
+
 			switch(text.substring(0,6).toLowerCase()){
 				case "<text>": {
 //					in.close();
@@ -600,6 +778,12 @@ private BufferedImage resizeImage(String text){
 					WtsPara(1);
 					break;
 				}
+				case "<mapa>":{
+					mode=3;
+					paintMap();
+					break;
+				}
+				
 			}
 			
 			setWys();
@@ -607,6 +791,7 @@ private BufferedImage resizeImage(String text){
 		} catch (IOException e) {
 		
 			e.printStackTrace();
+			ErrorShow("6");
 		}
 			
 	}
@@ -643,6 +828,9 @@ private BufferedImage resizeImage(String text){
 		if(fromCmd().equals("idewchujztejwiochy")){
 			System.exit(0);
 		}
+		if(fromCmd().equals("fddreboot")){
+			fddreboot();
+		}
 		switch(mode){
 		case 0:{
 		switch(fromCmd().substring(0,3)){
@@ -650,7 +838,7 @@ private BufferedImage resizeImage(String text){
 		case "cd ":{ 
 			if(fromCmd().substring(4).contains(" ")){
 			ReadFile(fromCmd().substring(3,fromCmd().indexOf(' ', 4)),0);
-			System.out.println(fromCmd().substring(3,fromCmd().indexOf(' ', 4)));
+//			System.out.println(fromCmd().substring(3,fromCmd().indexOf(' ', 4)));
 			}
 			else{
 			ReadFile(fromCmd().substring(3),0);	
@@ -663,11 +851,16 @@ private BufferedImage resizeImage(String text){
 			cmd.setText("");
 			break;
 		}
-		case "dir":{
-			ReadFile(fromCmd().substring(3)+"fpp",0);
-			cmd.setText("");
-			break;
-		}
+//		case "dir":{
+//			fddread=true;
+//			ReadFile(fromCmd().substring(3)+"fpp",0);
+//			cmd.setText("");
+//			break;
+//		}
+//		case "fdd":{
+//			
+//			break;
+//		}
 		case "run":{
 			if(fromCmd().substring(4,9).equals("debug")){
 				
@@ -792,6 +985,33 @@ private BufferedImage resizeImage(String text){
 			} break;
 			} // end case mode 2
 		}// end case 2
+		
+		case 3:
+		{
+			switch(fromCmd().substring(0,3))
+			{
+			case "cd ":{
+				mode=0;
+				if(fromCmd().substring(4).contains(" ")){
+					ReadFile(fromCmd().substring(3,fromCmd().indexOf(' ', 4)),0);
+
+					}
+					else{
+					ReadFile(fromCmd().substring(3),0);	
+					}
+				cmd.setText("");
+				break;
+			}
+			case "kr ":{
+			
+
+				setPointOnMap(fromCmd().substring(3));
+				cmd.setText("");
+				break;
+			}
+			} // end command switch
+			
+		} // end case 3
 		
 		} // end main switch
 		}catch(StringIndexOutOfBoundsException f){
