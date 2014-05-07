@@ -1,0 +1,38 @@
+﻿<info>
+root=file://localhost/c|/
+Error_msg=Nieznane polecenie. W celu uzyskania pelnej listy polecen uzyj komendy help
+cdRom=f:\
+Hlp_url=hlp
+Wlc_url=wlc
+resolution=1000,600
+background=0,0,0
+frontground=0,255,0
+font=Monospaced,14
+skipPixels=3
+fullScreen=ON
+noFile=nie ma takiego pliku czaisz bialasie?!
+noDir=Katalog jest pusty lub uszkodzony.
+failedHack=System zlokalizowal probe odgadniecia hasla, ale ci nie wyszlo CIOTO
+noAccess=brak dostepu do pliku
+onTop=ON
+easternEggs=Off
+wordAppear=30
+wrongPassword=Trafiles w:
+randomChars=QW-E=RT_+YU&*()IOP{}ASDF$%^GHJKL:"ZXCV/B'NM<>?!@#
+adminPass=asdf
+<hack_text>
+Algorytm #33ER wspomagający znajdowanie hasła utworzył listę
+z możliwymi wyrazami kluczami. Używając polecenia PS wybrany_Wyraz
+przekazujesz jeden z wyrazów do pamięci w celu dekodowania pliku.
+Aby opuścić tryb debug należy wpisać komendę QIT
+Przykład użycia komendy ps:
+ps franek
+<end_text>
+<info_text>
+<img>logosamlis.jpg</img>ZEAP ONLINE TERMINAL.
+
+WSZELKIE PRAWA ZASTRZEZONE ZAKLAD ELEKTRONIKI I AUTOMATYKI PRZEMYSLOWEJ OSTRÓW WLKP
+2074. BUILD 1042 VEXILLIUM 19 JAN 2038 14:08 UTC
+<end_text>
+<end_file>
+
