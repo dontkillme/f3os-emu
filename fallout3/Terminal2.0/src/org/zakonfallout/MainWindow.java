@@ -30,17 +30,20 @@ import org.vexillium.map.MapPanel;
 import org.vexillium.threads.EasternTimer;
 import org.zakonfallout.admin.AdminPanel;
 import org.zakonfallout.admin.AdminUtils;
+import org.zakonfallout.objects.ModeList;
 import org.zakonfallout.utils.Parsers;
 
 public class MainWindow extends JFrame implements KeyListener {
 	/*
-	 * Primitives
+	 * Primitives & enums
 	 */
+	private ModeList mode = ModeList.NORMAL;
 	private int middleHeight = (int) Math.ceil(Config.getHeight()*(double) 23/30),
-			mode = 0,
-			chances = 4,
-			goAdmin=0;
-	private boolean hacked = false;
+				//mode = 0,
+				 chances = 4;
+	private boolean hacked = false,
+			byPass=false,
+			goAdmin = false;
 	/*
 	 * JComponents
 	 */
@@ -73,56 +76,13 @@ public class MainWindow extends JFrame implements KeyListener {
 	 * Main Construction for window, loads stuff from config, burns heretics etc :P
 	 */
 	public MainWindow() {
-		
-		if(Config.isEasternEggs()){
-			easternTimer = new EasternTimer();
-			easternTimer.start();
-		}
-		
-		middleScrollPane = new JScrollPane( middlePanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		mainWindow = this;
-		
-		
-		addWindowListener(new WindowAdapter() {
-		    public void windowOpened( WindowEvent e ) {
-		        cmdLine.requestFocus();
-		    }
-		    public void windowClosed( WindowEvent e) {
-		    	// kill all things!!!
-		    }
-		}); 
-		
-		getContentPane().setBackground(Config.getBackgroundColor());
-
-		setSize(Config.getWidth(), Config.getHeight());
-		setLayout(null);	// somehow i prefer it, if u dont like it just edit... HF :D
-		
-		/*
-		 * The part where fullscreen takes control of the world...
-		 */
-		if (Config.isFullScreen()) {	
-			if (Config.isOnTop()) {
-				setAlwaysOnTop(true);
-			}
-			
-			setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			setUndecorated(true);
-		}else{
-			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
-		}
-		
-		setCursor(Config.getCursor());
-		setUPCmdStuff();
-		setUpScrollPane();
-		upperPanel.setBounds(0,0,upperPanel.getWidth(),upperPanel.getHeight());
-		add(upperPanel);
-		add(middleScrollPane);
-
-		setVisible(true);
-//		System.out.println(Config.getRoot()+Config.getWlcFile());
-		openFile(Config.getWlcFile());
+		reSetPanel();
 	}
 	
+	/**
+	 * Scrolls to the top
+	 */
 	private void scrollToTop() {
 		setScrollHeight(-scrollBar.getValue());
 	}
@@ -182,6 +142,16 @@ public class MainWindow extends JFrame implements KeyListener {
 	}
 	
 	/**
+	 * Sets the cmd line visible and not
+	 * @param asdf
+	 */
+	private void visibleCmdLine(boolean asdf){
+		cmdLine.setEditable(asdf);
+		cmdLine.setVisible(asdf);
+		cmdChar.setVisible(asdf);
+	}
+	
+	/**
 	 * Sets up the scrollpane parameters
 	 */
 	private void setUpScrollPane() {
@@ -212,6 +182,73 @@ public class MainWindow extends JFrame implements KeyListener {
 	 */
 	public static void returnFromPanel(){
 		mainWindow.returnToMain();
+	}
+	
+	/*
+	 * REWRITE THIS!!!
+	 */
+	/**
+	 * Resets the panel settings or if there were no, he sets them.
+	 */
+	public static void reSetPanel(){
+
+		if(mainWindow.isVisible()){
+			MainWindow.returnFromPanel();
+			mainWindow.dispose();
+		}
+		
+		if(Config.isEasternEggs()){
+			mainWindow.easternTimer = new EasternTimer();
+			mainWindow.easternTimer.start();
+		}
+		
+		middleScrollPane = new JScrollPane( mainWindow.middlePanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		
+		
+		mainWindow.addWindowListener(new WindowAdapter() {
+		    public void windowOpened( WindowEvent e ) {
+		    	mainWindow.cmdLine.requestFocus();
+		    }
+		    public void windowClosed( WindowEvent e) {
+		    	//nothing
+		    }
+		}); 
+		
+		mainWindow.getContentPane().setBackground(Config.getBackgroundColor());
+
+		mainWindow.resize(Config.getWidth(), Config.getHeight());
+		mainWindow.setLayout(null);	// somehow i prefer it, if u dont like it just edit... HF :D
+		
+		/*
+		 * The part where fullscreen takes control of the world...
+		 */
+		if (Config.isFullScreen()) {	
+			if (Config.isOnTop()) {
+				mainWindow.setAlwaysOnTop(true);
+			}else{ // this is needed if we use the admin panel to change stuff
+				mainWindow.setAlwaysOnTop(false);
+			}
+			
+			mainWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			mainWindow.setUndecorated(true);
+		}else{
+			mainWindow.setUndecorated(false);
+			mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
+		}
+		
+		mainWindow.setCursor(Config.getCursor());
+		mainWindow.setUPCmdStuff();
+		
+		mainWindow.setUpScrollPane();
+		mainWindow.upperPanel.setBounds(0,0,mainWindow.upperPanel.getWidth(),mainWindow.upperPanel.getHeight());
+		mainWindow.upperPanel.SetUp();
+		mainWindow.add(mainWindow.upperPanel);
+		mainWindow.add(middleScrollPane);
+
+		mainWindow.setVisible(true);
+//		System.out.println(Config.getRoot()+Config.getWlcFile());
+		mainWindow.openFile(Config.getWlcFile());
 	}
 	
 	public static void startPausedActions(){
@@ -245,7 +282,9 @@ public class MainWindow extends JFrame implements KeyListener {
 		adminPanel.setPreferredSize(new Dimension(adminPanel.getWidth(),adminPanel.getHeight()));
 		middleScrollPane.setViewportView(adminPanel);
 		middleScrollPane.setBounds(0,upperPanel.getHeight(),Config.getWidth()+20, adminPanel.getHeight());
+		
 		setCMDLineHeight();
+		visibleCmdLine(false);
 		middleScrollPane.revalidate();
 		middleScrollPane.repaint();
 	}
@@ -349,7 +388,21 @@ public class MainWindow extends JFrame implements KeyListener {
 	/*
 	 * File opening, file type actions etc.
 	 */
-
+	
+	/**
+	 * Opens file that should be in main direct. If there are not in it, modify the config file parameters.
+	 * @param name - file name
+	 */
+	private void openStaticFile(String name){
+		try{
+			URL tempURL = new URL(Config.getRoot()+name+".f3s");
+			readFile(tempURL);
+		}catch(IOException e){
+			showToScreen("Something went wrong with opening static file...");	
+		}
+	}
+	
+	
 	/**
 	 * Opens file and checks the type of the file, depending on it, takes actions
 	 * if the path leads to direction it adds it to catalog. 
@@ -385,7 +438,8 @@ public class MainWindow extends JFrame implements KeyListener {
 					break;
 			}
 		} catch (MalformedURLException e) {
-				e.printStackTrace();	
+				showToScreen("Something went wrong with opening file/directory: " + name);
+				mode = ModeList.NORMAL;// returns console to normal mode. This can be a bug in future...
 		}
 	}
 	
@@ -493,12 +547,14 @@ public class MainWindow extends JFrame implements KeyListener {
 			 * opens textfile
 			 */
 			else if(head.toLowerCase().contains("hack")){
-				if(!hacked && mode==1){
-					setHackPanel( Integer.parseInt( head.substring( head.indexOf('>')+1 ) ) );
-				}else if (hacked){
+				if (hacked || byPass){
 					String tempText;
 					showToScreen(getTextFromFile(in).toString());
 					hacked=false;
+					mode=ModeList.NORMAL;
+				}
+				else if(!hacked && mode==ModeList.HACKMODE){
+					setHackPanel( Integer.parseInt( head.substring( head.indexOf('>')+1 ) ) );
 				}else{
 					showToScreen(Config.getNoAccess());
 				}
@@ -508,7 +564,7 @@ public class MainWindow extends JFrame implements KeyListener {
 			 * anyway it shows another panel, so feel free to add ur own implementation. Just test it and pray that it will work :P
 			 */
 			else if(head.toLowerCase().contains("map")){
-				mode = 2;
+				mode = ModeList.MAPMODE;
 				setMapPanel(Parsers.filterText(in.readLine())[1]);
 			}
 		} 
@@ -623,23 +679,21 @@ public class MainWindow extends JFrame implements KeyListener {
 		}else if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			//admin mode activation
 			if(fromCmd().equals("#active admin mode")){
-				goAdmin=1;
+				goAdmin=true;
 				showToScreen("enter password:");
 			}
-			else if(fromCmd().equals("#"+Config.getAdminPass()) && goAdmin==1){
+			else if(fromCmd().equals("#"+Config.getAdminPass()) && goAdmin){
 				Config.setAdminMode(true);
-				System.out.println("rock and roll!");
-				setAdminPanel();
-				goAdmin=0;
-			}
-			else if(fromCmd().equals("exit admin mode") && Config.isAdminMode()){
-				Config.setAdminMode(false);
+				mode = ModeList.ADMINMODE;
+				goAdmin=false;
+				showToScreen("Admin mode awaiting orders!");
+
 			}
 			//normal mode
 			else{
 			
 				switch(mode){
-				case 0:
+				case NORMAL :
 					if(fromCmd().equals("")){
 						//nothing to do, but its better then catching exception... 	
 						}
@@ -649,9 +703,14 @@ public class MainWindow extends JFrame implements KeyListener {
 						else if(getCommand().equals("dir")){
 							openFile("DirFile");
 						}
+					//not for ever, just for testing...
 						else if(getCommand().equals("jebzakon")){
 							if(Config.isEasternEggs()) setFlashPanel();
-						}else if(getCommand().equals("flashing")){
+						}
+						else if(getCommand().equals("cell")){
+							setAdminPanel();
+						}
+						else if(getCommand().equals("flashing")){
 							EasternEggConfig.setFlashing(true);
 						}
 						else if(getCommand().equals("rabarbar")){
@@ -663,9 +722,8 @@ public class MainWindow extends JFrame implements KeyListener {
 									EasternEggConfig.setRabarbar(true);
 								}
 							}
-						}else if(getCommand().equals("adminshow")){
-							showToScreen(AdminUtils.getAllProps());
 						}
+					// end of stuff for testing... they will be deleted in builds
 						else if(getCommand().equals("cd..")){
 							backOffCatalog();
 						}
@@ -674,7 +732,7 @@ public class MainWindow extends JFrame implements KeyListener {
 							 * checks if first argument is debug and acts on it.
 							 */
 							if(getFirstArgument().equals("debug")){
-								mode=1;
+								mode=ModeList.HACKMODE;
 								chances=4;
 								fileInMemory = getSecondArgument();
 								openFile(fileInMemory);
@@ -682,7 +740,7 @@ public class MainWindow extends JFrame implements KeyListener {
 							}
 						}
 						else if(getCommand().equals("hlp") || getCommand().equals("help")){
-							openFile(Config.getHlpFile());
+							openStaticFile(Config.getHlpFile());
 						}
 						
 						/*
@@ -692,7 +750,10 @@ public class MainWindow extends JFrame implements KeyListener {
 							System.exit(0);
 						}
 						else{
-							if(goAdmin>0) goAdmin=0;
+							if(goAdmin){ 
+								goAdmin=false;
+								returnFromPanel();
+							}
 							showToScreen(Config.getErrorText());
 						}
 				
@@ -700,13 +761,13 @@ public class MainWindow extends JFrame implements KeyListener {
 					/*
 					 * Hack mode
 					 */
-				case 1:
+				case HACKMODE:
 					
 					if(getCommand().equals("ps")){
 						
 						if(hackPanel.isRightPassword(getFirstArgument())){
 							hacked=true;
-							mode=0;
+							mode=ModeList.NORMAL;
 							returnToMain();
 							openFile(fileInMemory);
 						}else{
@@ -714,32 +775,55 @@ public class MainWindow extends JFrame implements KeyListener {
 						}
 						
 						if(chances<1){
-							mode = 0;
+							mode = ModeList.NORMAL;
 							returnToMain();
 							showToScreen(Config.getNoAccess());
 						}
 						
 					}else if(getCommand().equals("quit") || getCommand().equals("qit")){
-						mode=0;
+						mode=ModeList.NORMAL;
 						returnToMain();
 						openFile("DirFile");
 						
 					}
 					break;
 					
-				case 2:
+				case MAPMODE:
 					
 					if(getCommand().equals("point")){
 						mapPanel.setPoint(getFirstArgument());
 					}else if(getCommand().equals("treasure")){
 						mapPanel.randomPoint();
 					}else if(getCommand().equals("quit") || getCommand().equals("qit")){
-						mode=0;
+						mode=ModeList.NORMAL;
 						returnToMain();
 						openFile("DirFile");
 						
 					}
 					
+					break;
+					
+				case ADMINMODE: // this goes for admin mode
+					
+					if(getCommand().equals("#adminshow")){
+						showToScreen(AdminUtils.getAllProps());
+					}
+					else if(getCommand().equals("#help")){
+						openStaticFile("adminhelp");
+					}
+					else if(getCommand().equals("#adminpanel")){
+						setAdminPanel();
+					}
+					else if(getCommand().equals("#bypass")){
+							byPass ^= true;
+							showToScreen("byPass mode is working: "+byPass);
+					}
+					else if(getCommand().equals("#papa") || fromCmd().equals("#exit admin mode") && Config.isAdminMode()){
+						Config.setAdminMode(false);
+						mode = ModeList.NORMAL;
+						openFile("DirFile");
+					}
+
 					break;
 					
 				}

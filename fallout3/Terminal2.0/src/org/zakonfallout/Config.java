@@ -160,9 +160,7 @@ public class Config {
  				}
  				
  				else if(next.contains("resolution=")){
- 					temp=next.substring(next.indexOf("=")+1).split(",");
- 					setWidth(Integer.parseInt(temp[0]));
- 					setHeight(Integer.parseInt(temp[1]));
+ 					setResolution(next.substring(next.indexOf("=")+1));
  				}else if(next.contains("mapSectorWH=")){
  					temp=next.substring(next.indexOf("=")+1).split(",");
  					setWidth(Integer.parseInt(temp[0]));
@@ -233,7 +231,16 @@ public class Config {
 // 		}// end try
 	}
 
-
+	/**
+	 * 
+	 * @param next - resolution as string width,height.
+	 */
+	public static void setResolution(String next){
+		String temp[];
+		temp=next.split(",");
+		setWidth(Integer.parseInt(temp[0]));
+		setHeight(Integer.parseInt(temp[1]));
+	}
 	/**
 	 * @return the root
 	 */

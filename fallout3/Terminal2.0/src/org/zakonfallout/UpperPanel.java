@@ -21,17 +21,25 @@ public class UpperPanel extends JPanel {
 	private BufferedImage img;
 	
 	public UpperPanel(){
+		SetUp();
+	}
+	
+	/**
+	 * sets up the whole panel. Also is used after changing stuff in admin panel
+	 */
+	public void SetUp(){
 		setBackground(Config.getBackgroundColor());
 		setSize(width, height);
 		setLayout(null);
 		setFont(Config.getFont());
+		removeAll();
 		setUpPanel();
 	}
 	
 	/**
 	 * Sets up the panel stuff
 	 */
-	private void setUpPanel(){
+	public void setUpPanel(){
 		String temp[] = Parsers.filterText(Config.getInfoText());
 		
 		if(temp[1]!=null){

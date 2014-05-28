@@ -42,11 +42,28 @@ public class MiddlePanel extends JPanel {
 	 */
 	
 	public MiddlePanel(){
-		setSize(width-10,height);
+		setPanel();
+	}
+
+	/**
+	 * Sets up the whole panel.
+	 */
+	public void setPanel(){
+		calculation();
+		resize(width-10,height);
 		setLayout(null);
 		setBackground(Config.getBackgroundColor());
 	}
-
+	
+	/**
+	 * calculates the stuff for the panel;
+	 */
+	private void calculation(){
+		width = Config.getWidth();
+		height = (int) Math.ceil(Config.getHeight()*(double) 23/30);
+		contsHeight = (int) Math.ceil(Config.getHeight()*(double) 23/30);
+		lastPosition=0;
+	}
 	
 	/**
 	 * Sets the width of panel
