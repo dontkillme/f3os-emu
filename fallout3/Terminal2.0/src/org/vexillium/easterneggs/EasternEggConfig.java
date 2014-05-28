@@ -73,9 +73,7 @@ public class EasternEggConfig {
  					}
 				}
 				else if(inText.contains("rabarbarChars=")){
-					temp = inText.substring(inText.indexOf("=")+1).split("/");
-					setToReplaceChar(temp[0].charAt(0));
-					setReplacementChar(temp[1].charAt(0));
+					setRabarbars(inText.substring(inText.indexOf("=")+1));
 				}
 
 			}
@@ -86,6 +84,16 @@ public class EasternEggConfig {
 		} 
 	}
 
+	/**
+	 * Sets the rabarbar chars. It goes like this CharToBeReplace/ReplacementChar
+	 * @param text - CharToBeReplace/ReplacementChar
+	 */
+	public static void setRabarbars(String text){
+		String temp[] =  text.split("/");
+		setToReplaceChar(temp[0].charAt(0));
+		setReplacementChar(temp[1].charAt(0));
+	}
+	
 	/**
 	 * @return the flashText
 	 */
