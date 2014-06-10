@@ -333,7 +333,7 @@ public class MainWindow extends JFrame implements KeyListener {
 		cmdLine.setVisible(false);
 		cmdChar.setVisible(false);
 		
-		flashPanelEgg.startEgg("trololololo");
+		flashPanelEgg.startEgg(EasternEggConfig.getFlashText());
 		
 
 	}
@@ -686,7 +686,7 @@ public class MainWindow extends JFrame implements KeyListener {
 				Config.setAdminMode(true);
 				mode = ModeList.ADMINMODE;
 				goAdmin=false;
-				showToScreen("Admin mode awaiting orders!");
+				openFile("adminhelp");
 
 			}
 			//normal mode
@@ -706,9 +706,6 @@ public class MainWindow extends JFrame implements KeyListener {
 					//not for ever, just for testing...
 						else if(getCommand().equals("jebzakon")){
 							if(Config.isEasternEggs()) setFlashPanel();
-						}
-						else if(getCommand().equals("cell")){
-							setAdminPanel();
 						}
 						else if(getCommand().equals("flashing")){
 							EasternEggConfig.setFlashing(true);

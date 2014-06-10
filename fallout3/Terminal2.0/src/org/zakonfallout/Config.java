@@ -8,12 +8,11 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.nio.file.Path;
+
+
 import java.nio.file.Paths;
 
 import org.zakonfallout.utils.Parsers;
@@ -253,7 +252,15 @@ public class Config {
 	 * @param root the root to set
 	 */
 	public static void setRoot(String root) {
-		Config.root = root;
+		if(root.equalsIgnoreCase("this")){
+			String a = Paths.get("").toAbsolutePath().toString();
+			
+			a = a.replace('\\', '/');
+			a = a.replace(':', '|');
+			
+			Config.root = "file://localhost/"+a.toLowerCase()+"/";
+		}
+		else Config.root = root;
 	}
 
 

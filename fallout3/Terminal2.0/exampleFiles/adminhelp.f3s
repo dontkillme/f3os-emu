@@ -1,0 +1,19 @@
+<text>
+***********************************************************
+Welcome to admin mode help! There are several things
+you can change in this mode. For this moment this is the list
+of working commands:
+
+#adminshow - shows console properties in text mode
+
+#adminpanel - runs gui for console properties with possibility of changes
+remember that not all options are here. Some cant be changed during the 
+operation of program, other are not here cause im too lazy :P
+
+#bypass - if active, console will ignore hack mode and open files like the ones without hack parameter.
+
+to exit admin mode use:
+#papa
+#exit admin mode
+
+***********************************************************

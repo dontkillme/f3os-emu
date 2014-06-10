@@ -52,7 +52,9 @@ public class UpperPanel extends JPanel {
 				
 //				img = Parsers.recolorImage( img, imgW, imgH	);
 				img = Parsers.resetTheImage(img, imgW, imgH, temp[1]);
-			} catch (IOException e) { e.printStackTrace(); }
+			} catch (IOException e) { 
+				e.printStackTrace();
+				}
 			
 		}
 		repaint();

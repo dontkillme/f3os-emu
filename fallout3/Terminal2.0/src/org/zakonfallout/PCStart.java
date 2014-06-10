@@ -18,8 +18,7 @@ public class PCStart {
 	public static void main(String[] args) {
 		
 		Path currentRelativePath = Paths.get("");
-//		String file = currentRelativePath.toAbsolutePath().toString();
-		String file = "e:\\samlis\\";
+		String file = currentRelativePath.toAbsolutePath().toString();
 		try {
 			Config.loadConfig(file);
 			if(Config.isEasternEggs()){
