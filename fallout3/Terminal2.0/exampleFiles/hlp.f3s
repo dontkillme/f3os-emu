@@ -1,0 +1,29 @@
+<text>
+------------Pomoc-------------
+
+dostêpne komendy:
+
+cd - komenda zezwalaj¹ca na wchodzenie do danego pliku, przykładowe u¿ycie
+	cd nazwa_pliku
+cd.. - wychodzi do katalogu wyzej
+
+dir - pokazuje liste plików w katalogu
+
+qit - wycofanie siê w przypadku uruchomienia jakiœ dziwnej aplikacji lub system debug.
+
+run debug nazwa_pliki - uruchamia plik w trybie debug. np run debug menu
+
+------------------------------
+
+
+----------Dodatkowo----------
+
+egg ciekawostki - wszelkie malo i duzo interesujace wiadomosci z naszego swiata... takie malego
+
+egg jebzakon - nie chcesz tego zrobic... seriooo
+
+tetris - na nude idealne... gracz 1: a - lewo s - dol d - prawo f - obrot  gracz 2: j - lewo k- dol - l prawo - ; obrot
+
+egg heretics - wlasciwie... nic smiesznego..
+
+------------------------------
