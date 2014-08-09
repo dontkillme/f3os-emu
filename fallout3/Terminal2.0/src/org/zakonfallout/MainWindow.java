@@ -28,6 +28,7 @@ import org.vexillium.easterneggs.EasternEggConfig;
 import org.vexillium.easterneggs.FlashPanel;
 import org.vexillium.map.MapPanel;
 import org.vexillium.threads.EasternTimer;
+import org.vexillium.threads.ExternalDrive;
 import org.zakonfallout.admin.AdminPanel;
 import org.zakonfallout.admin.AdminUtils;
 import org.zakonfallout.objects.ModeList;
@@ -71,12 +72,15 @@ public class MainWindow extends JFrame implements KeyListener {
 	private ArrayList<StringBuilder> passwordList = new ArrayList<StringBuilder>();
 	private Caret caret;
 	private String fileInMemory;
-	
+	private ExternalDrive extDrive = new ExternalDrive();
 	/**
 	 * Main Construction for window, loads stuff from config, burns heretics etc :P
 	 */
 	public MainWindow() {
 		mainWindow = this;
+		if(Config.isExternalOn()){
+			extDrive.start();
+		}
 		reSetPanel();
 	}
 	
@@ -402,6 +406,13 @@ public class MainWindow extends JFrame implements KeyListener {
 		}
 	}
 	
+	/**
+	 * This method is for opening files by other packages
+	 * @param name
+	 */
+	public static void staticOpenFile(String name){
+		mainWindow.openFile(name);
+	}
 	
 	/**
 	 * Opens file and checks the type of the file, depending on it, takes actions
