@@ -162,7 +162,7 @@ public class HackPanel extends JPanel {
 	private void loadPasswords(int passwordLenght){
 		try {
 			passwordList.clear();
-			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(Config.getRoot()+"passwords.f3s").openStream(), "UTF-8"));
+			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(Config.getRealRoot()+"passwords.f3s").openStream(), "UTF-8"));
 			String tempPasswords="";
 			
 			loaderLoop : while( (tempPasswords = in.readLine()) != null ){

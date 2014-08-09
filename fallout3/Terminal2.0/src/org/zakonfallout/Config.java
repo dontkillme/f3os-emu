@@ -23,7 +23,10 @@ public class Config {
 	 */
 	private static String root = "",
 				   catalog = "",
+				   realRoot="",
 				   cdRom = "",
+				   usb="",
+				   floppy="a",
 				   wlcFile = "",
 				   hlpFile = "",
 				   hackText = "",
@@ -43,7 +46,8 @@ public class Config {
 	private static boolean fullScreen = false,
 							onTop = false,
 							easternEggs = false,
-							adminMode=false;
+							adminMode=false,
+							externalOn=false;
 	/*
 	 * int
 	 */
@@ -108,6 +112,7 @@ public class Config {
  				
  				if(next.contains("root=")){
  					setRoot(next.substring(next.indexOf("=")+1));
+ 					setRealRoot(next.substring(next.indexOf("=")+1));
  				}
  				else if(next.contains("wordAppear=")){
  					setWordAppear( Integer.parseInt( next.substring(next.indexOf("=")+1) ) );
@@ -172,6 +177,12 @@ public class Config {
  				else if(next.contains("cdRom=")){
  					setCdRom(next.substring(next.indexOf("=")+1));
  				}
+ 				else if(next.contains("usb=")){
+ 					setUsb(next.substring(next.indexOf("=")+1));
+ 				}
+ 				else if(next.contains("floppy=")){
+ 					setFloppy(next.substring(next.indexOf("=")+1));
+ 				}
  				else if(next.contains("randomChars=")){
  					setRandomChars(next.substring(next.indexOf("=")+1));
  				}
@@ -196,6 +207,11 @@ public class Config {
  						setOnTop(true);
  					}else{
  						setOnTop(false);
+ 					}
+ 				}
+ 				else if(next.contains("externalOn=")){
+ 					if(next.substring(next.indexOf("=")+1).equalsIgnoreCase("ON")){
+ 						setExternalOn(true);
  					}
  				}
  				else if(next.contains("<hack_text>")){
@@ -743,6 +759,62 @@ public class Config {
 	 */
 	public static void setAdminMode(boolean adminMode) {
 		Config.adminMode = adminMode;
+	}
+
+	/**
+	 * @return the usb
+	 */
+	public static String getUsb() {
+		return usb;
+	}
+
+	/**
+	 * @param usb the usb to set
+	 */
+	public static void setUsb(String usb) {
+		Config.usb = usb;
+	}
+
+	/**
+	 * @return the floppy
+	 */
+	public static String getFloppy() {
+		return floppy;
+	}
+
+	/**
+	 * @param floppy the floppy to set
+	 */
+	public static void setFloppy(String floppy) {
+		Config.floppy = floppy;
+	}
+
+	/**
+	 * @return the realRoot
+	 */
+	public static String getRealRoot() {
+		return realRoot;
+	}
+
+	/**
+	 * @param realRoot the realRoot to set
+	 */
+	public static void setRealRoot(String realRoot) {
+		Config.realRoot = realRoot;
+	}
+
+	/**
+	 * @return the externalOn
+	 */
+	public static boolean isExternalOn() {
+		return externalOn;
+	}
+
+	/**
+	 * @param externalOn the externalOn to set
+	 */
+	public static void setExternalOn(boolean externalOn) {
+		Config.externalOn = externalOn;
 	}
 
 	
