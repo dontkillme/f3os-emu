@@ -36,11 +36,9 @@ import org.zakonfallout.utils.Parsers;
 
 public class MainWindow extends JFrame implements KeyListener {
 	/*
-	 * Primitives & enums
+	 * Primitives
 	 */
-	private ModeList mode = ModeList.NORMAL;
 	private int middleHeight = (int) Math.ceil(Config.getHeight()*(double) 23/30),
-				//mode = 0,
 				 chances = 4;
 	private boolean hacked = false,
 			byPass=false,
@@ -450,7 +448,7 @@ public class MainWindow extends JFrame implements KeyListener {
 			}
 		} catch (MalformedURLException e) {
 				showToScreen("Something went wrong with opening file/directory: " + name);
-				mode = ModeList.NORMAL;// returns console to normal mode. This can be a bug in future...
+				Config.setMode(ModeList.NORMAL);// returns console to normal mode. This can be a bug in future...
 		}
 	}
 	
@@ -562,9 +560,9 @@ public class MainWindow extends JFrame implements KeyListener {
 					String tempText;
 					showToScreen(getTextFromFile(in).toString());
 					hacked=false;
-					mode=ModeList.NORMAL;
+					Config.setMode(ModeList.NORMAL);
 				}
-				else if(!hacked && mode==ModeList.HACKMODE){
+				else if(!hacked && Config.getMode()==ModeList.HACKMODE){
 					setHackPanel( Integer.parseInt( head.substring( head.indexOf('>')+1 ) ) );
 				}else{
 					showToScreen(Config.getNoAccess());
@@ -575,7 +573,7 @@ public class MainWindow extends JFrame implements KeyListener {
 			 * anyway it shows another panel, so feel free to add ur own implementation. Just test it and pray that it will work :P
 			 */
 			else if(head.toLowerCase().contains("map")){
-				mode = ModeList.MAPMODE;
+				Config.setMode(ModeList.MAPMODE);
 				setMapPanel(Parsers.filterText(in.readLine())[1]);
 			}
 		} 
@@ -597,7 +595,11 @@ public class MainWindow extends JFrame implements KeyListener {
 	}
 	
 	private void backOffCatalog(){
-		Config.setCatalog(Config.getCatalog().substring(0,Config.getCatalog().lastIndexOf("/")));
+		try{
+			Config.setCatalog(Config.getCatalog().substring(0,Config.getCatalog().lastIndexOf("/")));
+		}catch(StringIndexOutOfBoundsException e){
+			// actually this is how i shouldnt do... but nvm
+		}
 		openFile("DirFile");
 	}
 	
@@ -695,7 +697,7 @@ public class MainWindow extends JFrame implements KeyListener {
 			}
 			else if(fromCmd().equals("#"+Config.getAdminPass()) && goAdmin){
 				Config.setAdminMode(true);
-				mode = ModeList.ADMINMODE;
+				Config.setMode(ModeList.ADMINMODE);
 				goAdmin=false;
 				openFile("adminhelp");
 
@@ -703,7 +705,7 @@ public class MainWindow extends JFrame implements KeyListener {
 			//normal mode
 			else{
 			
-				switch(mode){
+				switch(Config.getMode()){
 				case NORMAL :
 					if(fromCmd().equals("")){
 						//nothing to do, but its better then catching exception... 	
@@ -740,7 +742,7 @@ public class MainWindow extends JFrame implements KeyListener {
 							 * checks if first argument is debug and acts on it.
 							 */
 							if(getFirstArgument().equals("debug")){
-								mode=ModeList.HACKMODE;
+								Config.setMode(ModeList.HACKMODE);
 								chances=4;
 								fileInMemory = getSecondArgument();
 								openFile(fileInMemory);
@@ -775,7 +777,7 @@ public class MainWindow extends JFrame implements KeyListener {
 						
 						if(hackPanel.isRightPassword(getFirstArgument())){
 							hacked=true;
-							mode=ModeList.NORMAL;
+							Config.setMode(ModeList.NORMAL);
 							returnToMain();
 							openFile(fileInMemory);
 						}else{
@@ -783,13 +785,13 @@ public class MainWindow extends JFrame implements KeyListener {
 						}
 						
 						if(chances<1){
-							mode = ModeList.NORMAL;
+							Config.setMode(ModeList.NORMAL);
 							returnToMain();
 							showToScreen(Config.getNoAccess());
 						}
 						
-					}else if(getCommand().equals("quit") || getCommand().equals("qit")){
-						mode=ModeList.NORMAL;
+					}else if(getCommand().equals("quit") || getCommand().equals("qit") || getCommand().equals("cd..")){
+						Config.setMode(ModeList.NORMAL);
 						returnToMain();
 						openFile("DirFile");
 						
@@ -803,7 +805,7 @@ public class MainWindow extends JFrame implements KeyListener {
 					}else if(getCommand().equals("treasure")){
 						mapPanel.randomPoint();
 					}else if(getCommand().equals("quit") || getCommand().equals("qit")){
-						mode=ModeList.NORMAL;
+						Config.setMode(ModeList.NORMAL);
 						returnToMain();
 						openFile("DirFile");
 						
@@ -828,7 +830,7 @@ public class MainWindow extends JFrame implements KeyListener {
 					}
 					else if(getCommand().equals("#papa") || fromCmd().equals("#exit admin mode") && Config.isAdminMode()){
 						Config.setAdminMode(false);
-						mode = ModeList.NORMAL;
+						Config.setMode(ModeList.NORMAL);
 						openFile("DirFile");
 					}
 
