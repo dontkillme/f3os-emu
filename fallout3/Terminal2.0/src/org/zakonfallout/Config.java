@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 
 import java.nio.file.Paths;
 
+import org.zakonfallout.objects.ModeList;
 import org.zakonfallout.utils.Parsers;
 
 public class Config {
@@ -66,6 +67,11 @@ public class Config {
 	private static Font font = new Font(Font.MONOSPACED, Font.BOLD, 14);
 	private static Cursor cursor = new Cursor(Cursor.TEXT_CURSOR);
 	
+	/*
+	 * enums
+	 */
+	
+	private static ModeList mode = ModeList.NORMAL;
 	/**
 	 * Loads config for terminal. Case sensive! The file should have:
 	 * root=<Address to files>
@@ -815,6 +821,20 @@ public class Config {
 	 */
 	public static void setExternalOn(boolean externalOn) {
 		Config.externalOn = externalOn;
+	}
+
+	/**
+	 * @return the mode
+	 */
+	public static ModeList getMode() {
+		return mode;
+	}
+
+	/**
+	 * @param mode the mode to set
+	 */
+	public static void setMode(ModeList mode) {
+		Config.mode = mode;
 	}
 
 	

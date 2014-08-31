@@ -32,11 +32,7 @@ public class PCStart {
 			}catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			
 		} 
-		
-		
-
 	}
 	
 

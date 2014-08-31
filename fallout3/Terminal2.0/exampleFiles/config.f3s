@@ -2,6 +2,9 @@
 root=this
 Error_msg=Nieznane polecenie. W celu uzyskania pelnej listy polecen uzyj komendy help
 cdRom=f:\
+usb=h:\
+floppy=a:\
+externalOn=ON
 Hlp_url=hlp
 Wlc_url=wlc
 resolution=800,600
@@ -9,18 +12,18 @@ background=0,0,0
 frontground=0,255,0
 exitCmd=idewchujztejwiochy
 font=Monospaced,14
-skipPixels=2
+skipPixels=3
 fullScreen=ON
-noFile=Brak pliku o takiej nazwie. Literówka?
+onTop=OFF
+noFile=nie ma takiego pliku czaisz bialasie?!
 noDir=Katalog jest pusty lub uszkodzony.
-failedHack=System wykrył próbe odczytania i użycia hasła zapasowego. Próba zablokowana. Życzymy miłego dnia.
-noAccess=Nie masz uprawnień do przeglądania tego pliku. W przypadku jeśli powinieneś mieć je, zgłoś się, do swojego administratora.
-onTop=ON
-easternEggs=ON
+failedHack=System zlokalizowal probe odgadniecia hasla, ale ci nie wyszlo CIOTO
+noAccess=brak dostepu do pliku
+easternEggs=OFF
 wordAppear=30
-wrongPassword=Hasło pokrywa się w:
+wrongPassword=Trafiles w:
 randomChars=QW-E=RT_+YU&*()IOP{}ASDF$%^GHJKL:"ZXCV/B'NM<>?!@#
-adminPass=thereisnorabarbar
+adminPass=asdf
 <hack_text>
 Algorytm #33ER wspomagający znajdowanie hasła utworzył listę
 z możliwymi wyrazami kluczami. Używając polecenia PS wybrany_Wyraz
@@ -30,7 +33,7 @@ Przykład użycia komendy ps:
 ps franek
 <end_text>
 <info_text>
-<img>zakon.png</img>ZEAP ONLINE TERMINAL.
+<img>logosamlis.jpg</img>ZEAP ONLINE TERMINAL.
 
 WSZELKIE PRAWA ZASTRZEZONE ZAKLAD ELEKTRONIKI I AUTOMATYKI PRZEMYSLOWEJ OSTRÓW WLKP
 2074. BUILD 1042 VEXILLIUM 19 JAN 2038 14:08 UTC

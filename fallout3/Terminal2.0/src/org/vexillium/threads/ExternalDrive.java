@@ -1,10 +1,10 @@
 package org.vexillium.threads;
 
 import java.io.File;
-
 import org.zakonfallout.Config;
 import org.zakonfallout.MainWindow;
-// cos nie dziala :PP
+import org.zakonfallout.objects.ModeList;
+
 public class ExternalDrive extends Thread{
 	private boolean runIt = true,
 					onDrive = false;
@@ -41,28 +41,26 @@ public class ExternalDrive extends Thread{
 						}
 					}
 				}
-				System.out.println(actualRoot+Config.getCatalog());
 				Thread.sleep(20000);	
 			}catch(InterruptedException e){}
 		}
 	}
 	
 	public void changeDisc(String adres){
-		
-		if(doesItExist(adres.charAt(17)+":\\")){
-			actualRoot = adres;
-			runChanges(adres, "");
-			onDrive = true;
-		}else{
-			if(copyOfDrive.charAt(17)!=actualRoot.charAt(17)){
-				actualRoot = copyOfDrive;
-				runChanges(actualRoot, copyOfCatalog);
+		if(Config.getMode()==ModeList.NORMAL){
+			if(doesItExist(adres.charAt(17)+":\\")){
+				actualRoot = adres;
+				runChanges(adres, "");
+				onDrive = true;
+			}else{
+				if(copyOfDrive.charAt(17)!=actualRoot.charAt(17)){
+					actualRoot = copyOfDrive;
+					runChanges(actualRoot, copyOfCatalog);
+				}
+				
+				onDrive = false;
 			}
-			
-			onDrive = false;
 		}
-		
-		
 	}
 	
 	private void runChanges(String adres, String catalog){
@@ -74,8 +72,14 @@ public class ExternalDrive extends Thread{
 	
 	private boolean doesItExist(String adres){
 		driver = new File(adres);
-		return driver.exists();
+		if(driver.exists()){
+			if(new File(adres+"DirFile.f3s").exists()){
+				return true;	
+			}
+		}
+		return false;
 	}
+	
 	/**
 	 * @return the runIt
 	 */
